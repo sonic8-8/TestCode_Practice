@@ -598,6 +598,108 @@ Service 클래스에는 @Transactional(readOnly = true)를 걸고
 
 ----------------------------------------------------------------------------------
 
+Presentation Layer 테스트 2
+
+이제 Controller 테스트를 진행해봅시다.
+총 2가지를 알아야하는데
+
+1. WebMvcTest 어노테이션
+2. Mockito 프레임워크 사용법
+
+이 둘입니다. 참고로 이 둘은 세트 상품임.
+
+먼저 WebMvcTest 어노테이션부터 봅시다.
+이게 뭐냐면 Controller 테스트 전용 어노테이션이라고 생각하시면 됨
+정확히는 컨트롤러만 테스트할 수 있게 컨트롤러 관련 빈으로 서버를 띄워주는 것입니다.
+
+그리고 추가로 알아둬야할게 있는데 Controller는 Service 빈이 있어야 정상적으로 기능을 수행할 수 있습니다.
+근데 만약 없으면 어떡하냐구요.
+그럼 front-end에서 보낸 요청을 DB에 저장하거나 조회하는 등의
+비즈니스 로직을 Controller에서 만들어줘야하는데
+이러면 Service와 Controller가 합쳐져 있는거 아닌가요
+
+이럼 나중에 유지보수하기 불편해집니다.
+그래서 분리하는게 좋습니다.
+
+아무튼 Controller에는 Service가 빈으로 등록돼있어야한다는 걸 알았습니다.
+근데 생각해볼게 있음.
+테스트할때는 영향을 받거나 주는게 없는게 좋다고 하지 않았습니까
+근데 Controller는 Service에 엄청 의존하고 있는데요.
+
+그럼 가짜로 Service 빈을 만들어놓고 Controller만 진짜를 사용해서 테스트하면 좋을듯
+이런 방법을 위해 Mockito 프레임워크를 사용하는것임
+
+그럼 가짜 Service 빈을 만들어봅시다.
+방법은 간단한데 @MockBean을
+Service 위에 붙여서 Mock Bean으로 등록하면 끝임
+
+---
 
 
 
+verify
+상황을 설정하고 반환받을 값을 설정할 수 있음
+
+
+ObjectMapper에 대해 알아봅시다.
+이게 뭐냐면 Object를 JSON 형태로 맵핑해주는 도구임
+HTTP 통신을 할때는 Object를 JSON 형태로 바꿔야한다고 했었죠
+이걸 개발자들 용어로 직렬화라고 합니다.
+그럼 반대로 JSON형태를 Object로 바꾸는 건 뭐게요.
+역직렬화입니다.
+아무튼 ObjectMapper는 이를 쉽게 해주는 애임
+이거 어디에 쓰냐구요. MockMvc로 Controller 테스트할때 씁니다.
+
+역직렬화는 어떨때 쓰는지도 자세히 살펴봅시다.
+POST요청이 들어오면 데이터가 어떤 형태로 들어오게요.
+HTTP 통신할때 JSON형태로 들어온다고 했었죠
+그럼 이거 서버에서 다시 Object로 바꿔야 뭐든 할 수 있지 않겠습니까
+여기서 필요한게 역직렬화 작업이구요.
+
+참고로 역직렬화 할때 requestDTO를 사용한다면 기본 생성자가 필요함
+그래서 @NoArgsConstrutor를 붙인 requestDTO를 만들어주면 좋습니다.
+
+@EnableJpaAuditing은
+JPA 엔티티에서 생성 및 수정과 관련된 메타 데이터를 자동으로 관리하기 위해 Spring Data JPA에서 제공하는 애노테이션입니다.
+이 기능을 사용하면, 엔티티가 생성되거나 수정될 때 자동으로 날짜, 시간, 사용자 등의 정보가 기록됨
+
+Controller에서 요청으로 들어온 변수들을 검증해주는 게 필요하다고 했습니다.
+이를 쉽게 도와주는 친구가 바로 validation 라이브러리임
+build.gradle에 추가하시면 됩니다.
+그리고 사용법도 알아보자면 2가지를 기억하면 됩니다.
+1) 검증하고 싶은 변수위에 어노테이션을 붙이기
+@NotNull
+@NotBlank
+@Positive
+이런거 붙이면 되구요.
+2) 매개변수 자리에 @Valid 붙이기
+구체적으로 @Valid @RequestBody ProductCreateRequestDTO request
+이런식으로 하시면 됨
+
+그리고 하나 더 생각해볼게 있습니다.
+서버에서 프론트에게 응답을 줄때 JSON 형태로 주면 된다고 했죠.
+근데 이때 응답의 형태를 통일해주면 좋습니다.
+ResponseEntity<>를 사용할 수 있지만 직접 만드는 방법도 있음.
+직접 만들어봅시다.
+ApiResponse라는 형식을 만들면 좋을듯
+
+메타 정보?
+
+ApiResponse라는 클래스파일을 만들어주면 됨
+HttpStatus
+message
+성공에 대한 data를 응답해줌
+
+jsonPath?
+
+Validate
+
+ControllerDTO와 ServiceDTO를 분리하는게 좋음
+
+layered 아키텍처
+hexagonal 아키텍처
+
+squash and merge
+테스트용임
+
+테스트
