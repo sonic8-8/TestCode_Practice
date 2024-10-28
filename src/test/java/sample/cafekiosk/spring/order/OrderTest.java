@@ -16,8 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static sample.cafekiosk.spring.product.ProductSellingStatus.*;
 import static sample.cafekiosk.spring.product.ProductType.HANDMADE;
 
-@ActiveProfiles("test")
-@SpringBootTest
 class OrderTest {
 
     @DisplayName("주문 생성 시 상품 리스트에서 주문의 총 금액을 계산한다.")
