@@ -18,19 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static sample.cafekiosk.spring.product.ProductSellingStatus.SELLING;
 import static sample.cafekiosk.spring.product.ProductType.*;
 
-@ActiveProfiles("test")
-@SpringBootTest
 class ProductTypeTest {
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private OrderService orderService;
-
 
     @DisplayName("재고 속성 상품인지 확인할 수 있다.")
     @Test

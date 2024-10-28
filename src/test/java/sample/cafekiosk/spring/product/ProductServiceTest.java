@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import sample.cafekiosk.spring.IntegrationTestSupport;
 import sample.cafekiosk.spring.product.requestDTO.ProductCreateRequest;
+import sample.cafekiosk.spring.product.requestDTO.ProductCreateServiceRequest;
 import sample.cafekiosk.spring.product.responseDTO.ProductResponse;
 
 import java.util.List;
@@ -17,9 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static sample.cafekiosk.spring.product.ProductSellingStatus.*;
 import static sample.cafekiosk.spring.product.ProductType.HANDMADE;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class ProductServiceTest {
+
+class ProductServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private ProductService productService;
@@ -49,7 +50,7 @@ class ProductServiceTest {
 
 
         // when
-        ProductResponse productResponse = productService.createProduct(request);
+        ProductResponse productResponse = productService.createProduct(request.toServiceRequest());
 
         // then
         assertThat(productResponse).
@@ -88,7 +89,7 @@ class ProductServiceTest {
                 .build();
 
         // when
-        ProductResponse productResponse = productService.createProduct(request);
+        ProductResponse productResponse = productService.createProduct(request.toServiceRequest());
 
         // then
         assertThat(productResponse).

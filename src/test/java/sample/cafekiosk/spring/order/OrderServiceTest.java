@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import sample.cafekiosk.spring.IntegrationTestSupport;
 import sample.cafekiosk.spring.order.requestDTO.OrderCreateRequest;
+import sample.cafekiosk.spring.order.requestDTO.OrderCreateServiceRequest;
 import sample.cafekiosk.spring.order.responseDTO.OrderResponse;
 import sample.cafekiosk.spring.orderproduct.OrderProductRepository;
 import sample.cafekiosk.spring.product.Product;
@@ -24,10 +26,8 @@ import static org.assertj.core.api.Assertions.*;
 import static sample.cafekiosk.spring.product.ProductSellingStatus.*;
 import static sample.cafekiosk.spring.product.ProductType.*;
 
-@ActiveProfiles("test")
-@Transactional
-@SpringBootTest
-public class OrderServiceTest {
+
+public class OrderServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private ProductRepository productRepository;
@@ -68,7 +68,7 @@ public class OrderServiceTest {
                 .build();
 
         // when
-        OrderResponse orderResponse = orderService.createOrder(request, registeredDateTime);
+        OrderResponse orderResponse = orderService.createOrder(request.toServiceRequest(), registeredDateTime);
 
         // then
         assertThat(orderResponse.getId()).isNotNull();
@@ -108,7 +108,7 @@ public class OrderServiceTest {
                 .build();
 
         // when
-        OrderResponse orderResponse = orderService.createOrder(request, registeredDateTime);
+        OrderResponse orderResponse = orderService.createOrder(request.toServiceRequest(), registeredDateTime);
 
         // then
         assertThat(orderResponse.getId()).isNotNull();
@@ -143,7 +143,7 @@ public class OrderServiceTest {
                 .build();
 
         // when
-        OrderResponse orderResponse = orderService.createOrder(request, registeredDateTime);
+        OrderResponse orderResponse = orderService.createOrder(request.toServiceRequest(), registeredDateTime);
 
         // then
         assertThat(orderResponse.getId()).isNotNull();
@@ -188,9 +188,8 @@ public class OrderServiceTest {
                 .productNumbers(List.of("001", "001", "002", "003"))
                 .build();
 
-
         // when // then
-        assertThatThrownBy(() -> orderService.createOrder(request, registeredDateTime))
+        assertThatThrownBy(() -> orderService.createOrder(request.toServiceRequest(), registeredDateTime))
                 .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("재고가 부족한 상품이 있습니다.");
 
