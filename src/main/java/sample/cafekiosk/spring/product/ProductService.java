@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sample.cafekiosk.spring.product.requestDTO.ProductCreateRequest;
+import sample.cafekiosk.spring.product.requestDTO.ProductCreateServiceRequest;
 import sample.cafekiosk.spring.product.responseDTO.ProductResponse;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     @Transactional
-    public ProductResponse createProduct(ProductCreateRequest request) {
+    public ProductResponse createProduct(ProductCreateServiceRequest request) {
 
         String nextProductNumber = createNextProductNumber();
 

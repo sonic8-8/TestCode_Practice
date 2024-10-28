@@ -3,6 +3,7 @@ package sample.cafekiosk.spring.order;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import sample.cafekiosk.spring.order.requestDTO.OrderCreateRequest;
+import sample.cafekiosk.spring.order.requestDTO.OrderCreateServiceRequest;
 import sample.cafekiosk.spring.product.Product;
 import sample.cafekiosk.spring.product.ProductRepository;
 import sample.cafekiosk.spring.order.responseDTO.OrderResponse;
@@ -29,12 +30,11 @@ public class OrderService {
      * 재고 감소 -> 동시성 고민
      * optimistic lock / pessimistic lock / ...
      */
-    public OrderResponse createOrder(OrderCreateRequest request, LocalDateTime registeredDateTime) {
+    public OrderResponse createOrder(OrderCreateServiceRequest request, LocalDateTime registeredDateTime) {
         List<String> productNumbers = request.getProductNumbers();
         List<Product> products = findProductsBy(productNumbers);
 
         deductStockQuantities(products);
-
 
         Order order = Order.create(products, registeredDateTime);
         Order savedOrder = orderRepository.save(order);
@@ -60,6 +60,7 @@ public class OrderService {
                 throw new IllegalArgumentException("재고가 부족한 상품이 있습니다.");
             }
             stock.deductQuantity(quantity);
+            stockRepository.save(stock);
         }
     }
 
